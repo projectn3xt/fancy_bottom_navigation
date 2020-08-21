@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 
 const double ICON_OFF = -3;
@@ -11,12 +12,14 @@ const int ANIM_DURATION = 300;
 class TabItem extends StatelessWidget {
   TabItem(
       {@required this.uniqueKey,
-        @required this.selected,
-        @required this.iconData,
-        @required this.title,
-        @required this.callbackFunction,
-        @required this.textColor,
-        @required this.iconColor});
+      @required this.selected,
+      @required this.iconData,
+      @required this.title,
+      @required this.callbackFunction,
+      @required this.textColor,
+      @required this.iconColor,
+      @required this.badge,
+      this.badgeColor = Colors.green});
 
   final UniqueKey uniqueKey;
   final String title;
@@ -25,6 +28,8 @@ class TabItem extends StatelessWidget {
   final Function(UniqueKey uniqueKey) callbackFunction;
   final Color textColor;
   final Color iconColor;
+  final Color badgeColor;
+  final int badge;
 
   final double iconYAlign = ICON_ON;
   final double textYAlign = TEXT_OFF;
@@ -32,55 +37,108 @@ class TabItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            child: AnimatedAlign(
+    if (badge != null) {
+      return Expanded(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+              height: double.infinity,
+              width: double.infinity,
+              child: AnimatedAlign(
+                  duration: Duration(milliseconds: ANIM_DURATION),
+                  alignment: Alignment(0, (selected) ? TEXT_ON : TEXT_OFF),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      title,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600, color: textColor),
+                    ),
+                  )),
+            ),
+            Container(
+              height: double.infinity,
+              width: double.infinity,
+              child: AnimatedAlign(
                 duration: Duration(milliseconds: ANIM_DURATION),
-                alignment: Alignment(0, (selected) ? TEXT_ON : TEXT_OFF),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    title,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w600, color: textColor),
-                  ),
-                )),
-          ),
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            child: AnimatedAlign(
-              duration: Duration(milliseconds: ANIM_DURATION),
-              curve: Curves.easeIn,
-              alignment: Alignment(0, (selected) ? ICON_OFF : ICON_ON),
-              child: AnimatedOpacity(
+                curve: Curves.easeIn,
+                alignment: Alignment(0, (selected) ? ICON_OFF : ICON_ON),
+                child: AnimatedOpacity(
+                    duration: Duration(milliseconds: ANIM_DURATION),
+                    opacity: (selected) ? ALPHA_OFF : ALPHA_ON,
+                    child: FlatButton(
+                      child: Badge(
+                        position: BadgePosition.topRight(top: -15, right: -8),
+                        badgeColor: badgeColor,
+                        badgeContent: Text(
+                          badge.toString(),
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        child: Icon(iconData, color: iconColor),
+                      ),
+                      onPressed: () {
+                        callbackFunction(uniqueKey);
+                      },
+                    )),
+              ),
+            )
+          ],
+        ),
+      );
+    } else {
+      return Expanded(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+              height: double.infinity,
+              width: double.infinity,
+              child: AnimatedAlign(
+                  duration: Duration(milliseconds: ANIM_DURATION),
+                  alignment: Alignment(0, (selected) ? TEXT_ON : TEXT_OFF),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      title,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600, color: textColor),
+                    ),
+                  )),
+            ),
+            Container(
+              height: double.infinity,
+              width: double.infinity,
+              child: AnimatedAlign(
                 duration: Duration(milliseconds: ANIM_DURATION),
-                opacity: (selected) ? ALPHA_OFF : ALPHA_ON,
-                child: IconButton(
-                  highlightColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  padding: EdgeInsets.all(0),
-                  alignment: Alignment(0, 0),
-                  icon: Icon(
-                    iconData,
-                    color: iconColor,
+                curve: Curves.easeIn,
+                alignment: Alignment(0, (selected) ? ICON_OFF : ICON_ON),
+                child: AnimatedOpacity(
+                  duration: Duration(milliseconds: ANIM_DURATION),
+                  opacity: (selected) ? ALPHA_OFF : ALPHA_ON,
+                  child: IconButton(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    padding: EdgeInsets.all(0),
+                    alignment: Alignment(0, 0),
+                    icon: Icon(
+                      iconData,
+                      color: iconColor,
+                    ),
+                    onPressed: () {
+                      callbackFunction(uniqueKey);
+                    },
                   ),
-                  onPressed: () {
-                    callbackFunction(uniqueKey);
-                  },
                 ),
               ),
-            ),
-          )
-        ],
-      ),
-    );
+            )
+          ],
+        ),
+      );
+    }
   }
 }

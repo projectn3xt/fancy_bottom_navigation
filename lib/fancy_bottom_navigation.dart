@@ -1,5 +1,6 @@
 library fancy_bottom_navigation;
 
+import 'package:badges/badges.dart';
 import 'package:fancy_bottom_navigation/internal/tab_item.dart';
 import 'package:fancy_bottom_navigation/paint/half_clipper.dart';
 import 'package:fancy_bottom_navigation/paint/half_painter.dart';
@@ -22,6 +23,7 @@ class FancyBottomNavigation extends StatefulWidget {
       this.activeIconColor,
       this.inactiveIconColor,
       this.textColor,
+      //this.badgeColor,
       this.barBackgroundColor})
       : assert(onTabChangedListener != null),
         assert(tabs != null),
@@ -29,6 +31,7 @@ class FancyBottomNavigation extends StatefulWidget {
 
   final Function(int position) onTabChangedListener;
   final Color circleColor;
+  //final Color badgeColor;
   final Color activeIconColor;
   final Color inactiveIconColor;
   final Color textColor;
@@ -56,12 +59,25 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
   Color inactiveIconColor;
   Color barBackgroundColor;
   Color textColor;
+  //Color badgeColor;
+
+  int badge;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
     activeIcon = widget.tabs[currentSelected].iconData;
+
+    badge = widget.tabs[currentSelected].badge;
+
+    //badgeColor
+
+    // badgeColor = (widget.badgeColor == null)
+    //     ? (Theme.of(context).brightness == Brightness.dark)
+    //         ? Colors.green
+    //         : Colors.blue
+    //     : widget.badgeColor;
 
     circleColor = (widget.circleColor == null)
         ? (Theme.of(context).brightness == Brightness.dark)
@@ -133,6 +149,8 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
                     title: t.title,
                     iconColor: inactiveIconColor,
                     textColor: textColor,
+                    badge: t.badge,
+                    badgeColor: t.badgeColor,
                     callbackFunction: (uniqueKey) {
                       int selected = widget.tabs
                           .indexWhere((tabData) => tabData.key == uniqueKey);
@@ -197,14 +215,14 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
                             child: Padding(
                               padding: const EdgeInsets.all(0.0),
                               child: AnimatedOpacity(
-                                duration:
-                                    Duration(milliseconds: ANIM_DURATION ~/ 5),
-                                opacity: _circleIconAlpha,
-                                child: Icon(
-                                  activeIcon,
-                                  color: activeIconColor,
-                                ),
-                              ),
+                                  duration: Duration(
+                                      milliseconds: ANIM_DURATION ~/ 5),
+                                  opacity: _circleIconAlpha,
+                                  child: _getIcon(
+                                      widget.tabs[currentSelected].badge,
+                                      activeIcon,
+                                      activeIconColor,
+                                      widget.tabs[currentSelected].badgeColor)),
                             ),
                           ),
                         )
@@ -218,6 +236,28 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
         )
       ],
     );
+  }
+
+  Widget _getIcon(
+      int badge, IconData activeIcon, Color activeIconColor, Color badgeColor) {
+    if (badge != null) {
+      return Center(
+        child: Badge(
+          badgeColor: badgeColor,
+          position: BadgePosition.topRight(top: -12, right: -8),
+          badgeContent: Text(
+            badge.toString(),
+            style: TextStyle(color: Colors.white),
+          ),
+          child: Icon(activeIcon, color: activeIconColor),
+        ),
+      );
+    } else {
+      return Icon(
+        activeIcon,
+        color: activeIconColor,
+      );
+    }
   }
 
   _initAnimationAndStart(double from, double to) {
@@ -248,10 +288,17 @@ class FancyBottomNavigationState extends State<FancyBottomNavigation>
 }
 
 class TabData {
-  TabData({@required this.iconData, @required this.title, this.onclick});
+  TabData(
+      {@required this.iconData,
+      @required this.title,
+      this.onclick,
+      this.badge,
+      this.badgeColor});
 
   IconData iconData;
   String title;
   Function onclick;
   final UniqueKey key = UniqueKey();
+  int badge;
+  Color badgeColor;
 }

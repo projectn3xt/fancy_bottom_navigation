@@ -54,7 +54,11 @@ class _MyHomePageState extends State<MyHomePage> {
               title: "Search",
               onclick: () => Navigator.of(context)
                   .push(MaterialPageRoute(builder: (context) => SecondPage()))),
-          TabData(iconData: Icons.shopping_cart, title: "Basket")
+          TabData(
+              iconData: Icons.shopping_cart,
+              title: "Basket",
+              badge: 3,
+              badgeColor: Colors.green)
         ],
         initialSelection: 1,
         key: bottomNavigationKey,
