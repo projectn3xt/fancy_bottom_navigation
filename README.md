@@ -1,3 +1,6 @@
+# Original Repository
+https://pub.dev/packages/fancy_bottom_navigation
+
 # FancyBottomNavigation
 
 ![Fancy Gif](https://github.com/tunitowen/fancy_bottom_navigation/blob/master/fancy_gif.gif "Fancy Gif")
@@ -10,6 +13,8 @@ Add the plugin (pub coming soon):
 dependencies:
   ...
   fancy_bottom_navigation: ^0.3.2
+    git:
+        url: https://github.com/projectn3xt/fancy_bottom_navigation
 ```
 
 ## Limitations
@@ -23,7 +28,7 @@ bottomNavigationBar: FancyBottomNavigation(
     tabs: [
         TabData(iconData: Icons.home, title: "Home"),
         TabData(iconData: Icons.search, title: "Search"),
-        TabData(iconData: Icons.shopping_cart, title: "Basket")
+        TabData(iconData: Icons.shopping_cart, title: "Basket", badge: 3, badgeColor: Colors.green)
     ],
     onTabChangedListener: (position) {
         setState(() {
@@ -36,7 +41,9 @@ bottomNavigationBar: FancyBottomNavigation(
 ## TabData
 **iconData** -> Icon to be used for the tab<br/>
 **title** -> String to be used for the tab<br/>
-**onClick** -> Optional function to be used when the circle itself is clicked, on an active tab
+**onClick** -> Optional function to be used when the circle itself is clicked, on an active tab<br/>
+**badge** -> Number<br/>
+**badgeColor** -> Color
 
 ## Attributes
 ### required
